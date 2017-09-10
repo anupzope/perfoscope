@@ -1,0 +1,12 @@
+#get_filename_component(PERFOSCOPE_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+#include("${PERFOSCOPE_CMAKE_DIR}/perfoscope-targets.cmake")
+
+@PACKAGE_INIT@
+
+set(perfoscope_VERSION_MAJOR "@perfosocpe_VERSION_MAJOR@")
+set(perfoscope_VERSION_MAJOR "@perfoscope_VERSION_MINOR@")
+set(perfoscope_VERSION_MAJOR "@perfoscope_VERSION_PATCH@")
+set(perfoscope_VERSION_MAJOR "@perfoscope_VERSION@")
+
+include("${CMAKE_CURRENT_LIST_DIR}/perfoscope-targets.cmake")
+
