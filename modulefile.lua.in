@@ -1,0 +1,15 @@
+family("perfoscope")
+
+prereq(atleast("sqlite","3.21.0"))
+prereq(atleast("papi","5.5.1"))
+
+help([[
+sets environment for perfoscope/@PROJECT_VERSION@
+]])
+
+whatis("sets environment for perfoscope/@PROJECT_VERSION@")
+
+local version = "@PROJECT_VERSION@"
+local prefix = "@CMAKE_INSTALL_PREFIX@/perfoscope/@PROJECT_VERSION@"
+
+prepend_path("perfoscope_DIR", prefix)

@@ -13,9 +13,18 @@ namespace perfoscope_internal {
 typedef timespec real_time_t;
 
 inline double difftime(const timespec &end, const timespec &start) {
-  time_t sec = end.tv_sec - start.tv_sec;
-  long nsec = end.tv_nsec - start.tv_nsec;
-  return sec+nsec*1e-9;
+//  time_t sec = end.tv_sec - start.tv_sec;
+//  long nsec = end.tv_nsec - start.tv_nsec;
+//  return sec+nsec*1e-9;
+  timespec result;
+  if((end.tv_nsec - start.tv_nsec) < 0) {
+    result.tv_sec = end.tv_sec - start.tv_sec - 1;
+    result.tv_nsec = end.tv_nsec - start.tv_nsec + 1000000000;
+  } else {
+    result.tv_sec = end.tv_sec - start.tv_sec;
+    result.tv_nsec = end.tv_nsec - start.tv_nsec;
+  }
+  return double(result.tv_sec)+double(result.tv_nsec)*1e-9;
 }
 
 inline real_time_t get_real_time() {

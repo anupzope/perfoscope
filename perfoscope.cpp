@@ -244,9 +244,9 @@ void PerfoscopeUtil::add_run_data(
   long long run_id;
   bool run_created = false;
   
-  for(int pdi = 0; pdi < count; ++pdi) {
-    if(perfoscope_data_list[pdi] != nullptr) {
-      if((sqlrc = create_new_run(perfoscope_data_list[pdi]->profile_name().c_str(), problem_size, &run_id)) == SQLITE_OK) {
+  for(int i = 0; i < count; ++i) {
+    if(perfoscope_data_list[i] != nullptr) {
+      if((sqlrc = create_new_run(perfoscope_data_list[i]->profile_name().c_str(), problem_size, &run_id)) == SQLITE_OK) {
         run_created = true;
         s_modified = true;
         break;
@@ -257,9 +257,9 @@ void PerfoscopeUtil::add_run_data(
   }
   
   if(run_created) {
-    for(int pdi = 0; pdi < count; ++pdi) {
-      if(perfoscope_data_list[pdi] != nullptr) {
-        add_perfoscope_data(*perfoscope_data_list[pdi], run_id);
+    for(int i = 0; i < count; ++i) {
+      if(perfoscope_data_list[i] != nullptr) {
+        add_perfoscope_data(*perfoscope_data_list[i], run_id);
       }
     }
   }
@@ -1011,12 +1011,25 @@ void Perfoscope::init(const char *file, const int line) {
   }
   
   // Add events to eventset
-  errcode = PAPI_add_events(m_eventset, &m_data->m_event_codes[0], nevents);
-  if(errcode != PAPI_OK) {
-    PerfoscopeUtil::print_error(file, line, "%s - %s, PAPI errorcode: %d, PAPI error: %s", 
-      __PRETTY_FUNCTION__, "could not add events to eventset", errcode, PAPI_strerror(errcode));
-    perfoscope_internal::abort(errcode);
+  for(int i = 0; i < nevents; ++i) {
+    errcode = PAPI_add_event(m_eventset, m_data->m_event_codes[i]);
+    if(errcode != PAPI_OK) {
+      char ename[PAPI_MAX_STR_LEN];
+      PAPI_event_code_to_name(m_data->m_event_codes[i], ename);
+      PerfoscopeUtil::print_error(file, line, 
+        "%s - %s %s %s, PAPI errorcode: %d, PAPI error: %s", 
+        __PRETTY_FUNCTION__, "could not add event", ename, 
+        "to eventset", errcode, PAPI_strerror(errcode));
+      perfoscope_internal::abort(errcode);
+    }
   }
+  
+  //errcode = PAPI_add_events(m_eventset, &m_data->m_event_codes[0], nevents);
+  //if(errcode != PAPI_OK) {
+  //  PerfoscopeUtil::print_error(file, line, "%s - %s, PAPI errorcode: %d, PAPI error: %s", 
+  //    __PRETTY_FUNCTION__, "could not add events to eventset", errcode, PAPI_strerror(errcode));
+  //  perfoscope_internal::abort(errcode);
+  //}
 #endif // USING_PERFOSCOPE_HWC
 }
 

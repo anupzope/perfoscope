@@ -5,19 +5,11 @@
 #include "common.hpp"
 
 #ifdef USING_PERFOSCOPE_HWC
-#ifdef USING_PAPI
 #include <papi.h>
-#else // USING_PAPI
-#error "PAPI not configured..."
-#endif // USING_PAPI
 #endif // USING_PERFOSCOPE_HWC
 
 #ifdef USING_PERFOSCOPE_DBSTORE
-#ifdef USING_SQLITE
 #include <sqlite3.h>
-#else
-#error "sqlite3 not configured..."
-#endif // USING_SQLITE3
 #endif // USING_PERFOSCOPE_DBSTORE
 
 #include <string>
@@ -470,8 +462,10 @@ extern int all_pscope_data_count;
 Perfoscope *pscope;
 #pragma omp threadprivate(pscope)
 
-inline void perfoscope_init(char *profile_name, char *categories[], int ncategories, char *events[], int nevents) {
-  const PerfoscopeData & tmplt = PerfoscopeUtil::init(profile_name, categories, ncategories, events, nevents);
+inline void perfoscope_init(char *profile_name, char *categories[], 
+int ncategories, char const *events[], int nevents) {
+  const PerfoscopeData & tmplt = PerfoscopeUtil::init(profile_name, categories, 
+    ncategories, events, nevents);
   all_pscope_data_count = omp_get_max_threads();
   all_pscope_data = new PerfoscopeData*[all_pscope_data_count];
   #pragma omp parallel
